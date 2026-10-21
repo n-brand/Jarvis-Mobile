@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;600&family=JetBrains+Mono:wght@300;400&family=Nunito:wght@400;700;800;900&display=swap');
 
 :root {
   /* The interface cyan. `--accent` is re-declared per phase and per panel;
@@ -2383,3 +2383,275 @@ kbd {
   transform: scaleX(-1);
   background: #000;
 }
+
+/* ======================================================= FLAT LOOK (TEST) */
+/* Portfolio style (n-brand.github.io/portfolio), switched on by
+   <html data-look="flat"> — see src/lib/look.ts. Only overrides; with the
+   attribute absent none of this applies and the original look is untouched. */
+
+[data-look='flat'] {
+  --bg: #0d1a2d;
+  --flat-navy: #183153;
+  --flat-yellow: #ffd43b;
+  --flat-yellow-edge: #e0a800;
+  --flat-muted: #a5c8ec;
+  font-family: 'Nunito', system-ui, sans-serif;
+}
+[data-look='flat'] body::after { display: none; }
+
+/* --- Reactor card --- */
+
+.flat-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  padding-bottom: 22vh;
+  background: radial-gradient(circle at 50% 39%, #1b3558 0, #1b3558 22vmin, transparent 22.2vmin);
+  --lvl: 0;
+  --spin: 14s;
+}
+.flat-scene[data-phase='offline'] { --spin: 0s; }
+.flat-scene[data-phase='boot'],
+.flat-scene[data-phase='waking'] { --spin: 3s; }
+.flat-scene[data-phase='listening'] { --spin: 6s; }
+.flat-scene[data-phase='thinking'] { --spin: 2.4s; }
+.flat-scene[data-phase='tooling'] { --spin: 1.4s; }
+.flat-scene[data-phase='speaking'] { --spin: 5s; }
+
+.flat-card {
+  position: relative;
+  width: min(86vw, 460px);
+  aspect-ratio: 240 / 150;
+  display: grid;
+  place-items: center;
+  background: #a51d2d;
+  border-radius: 26px;
+  box-shadow: 0 8px 0 #6e0f1b;
+  transition: transform 300ms ease;
+}
+.flat-scene[data-phase='offline'] .flat-card { filter: saturate(0.5) brightness(0.7); }
+.flat-scene[data-phase='waking'] .flat-card { transform: scale(1.03); }
+
+.flat-art { width: 100%; height: auto; overflow: visible; }
+
+.flat-ring,
+.flat-inner,
+.flat-glow,
+.flat-core,
+.flat-bar {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.flat-ring { animation: flat-spin var(--spin) linear infinite; }
+.flat-scene[data-phase='offline'] .flat-ring { animation: none; }
+.flat-glow {
+  transform: scale(calc(0.8 + var(--lvl) * 0.55));
+  opacity: calc(0.5 + var(--lvl) * 0.5);
+}
+.flat-core { transform: scale(calc(1 + var(--lvl) * 0.3)); }
+/* Thinking and tool use: the inner ring turns yellow and dashed and spins
+   against the outer one — the "working" state of the card. */
+.flat-scene[data-phase='thinking'] .flat-inner,
+.flat-scene[data-phase='tooling'] .flat-inner {
+  stroke: var(--flat-yellow);
+  stroke-dasharray: 10 6;
+  animation: flat-spin 1.8s linear infinite reverse;
+}
+
+@keyframes flat-spin { to { transform: rotate(360deg); } }
+
+/* The pill on the card's top edge, like LIVE / IN ARBEIT on the portfolio. */
+.flat-badge {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 5px 14px;
+  border-radius: 9px;
+  background: var(--flat-yellow);
+  color: var(--flat-navy);
+  font: 900 13px/1 'Nunito', system-ui, sans-serif;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  box-shadow: 0 3px 0 var(--flat-yellow-edge);
+}
+.flat-scene[data-phase='listening'] .flat-badge { background: #a9e34b; box-shadow: 0 3px 0 #58a64b; }
+.flat-scene[data-phase='speaking'] .flat-badge { background: #4dd4ff; box-shadow: 0 3px 0 #1c7ed6; }
+.flat-scene[data-phase='offline'] .flat-badge { background: #a5c8ec; box-shadow: 0 3px 0 #74c0fc; }
+
+@media (prefers-reduced-motion: reduce) {
+  .flat-ring,
+  .flat-scene .flat-inner { animation: none !important; }
+}
+
+/* --- HUD in the portfolio style --- */
+
+[data-look='flat'] .hud {
+  color: #fff;
+  font-family: 'Nunito', system-ui, sans-serif;
+  text-transform: none;
+  letter-spacing: normal;
+}
+[data-look='flat'] .corner,
+[data-look='flat'] .rail-right,
+[data-look='flat'] .rail-left .rail-title,
+[data-look='flat'] .rail-left .rail-item,
+[data-look='flat'] .boot { display: none; }
+
+[data-look='flat'] .hud-top {
+  top: calc(env(safe-area-inset-top, 0px) + 18px);
+  padding: 0 22px;
+  gap: 12px;
+}
+[data-look='flat'] .brand-mark,
+[data-look='flat'] .brand-select {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-weight: 900;
+  font-size: calc(26px * var(--edge-scale));
+  letter-spacing: 0.04em;
+  text-shadow: none;
+  color: #fff;
+}
+[data-look='flat'] .brand-sub,
+[data-look='flat'] .brand-credit {
+  color: var(--flat-muted);
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+[data-look='flat'] .status {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--flat-navy);
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  max-width: 46vw;
+}
+
+/* The three rail buttons become a touch-sized bar at the bottom. */
+[data-look='flat'] .rail-left {
+  position: fixed;
+  top: auto;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+  transform: translateX(-50%);
+}
+[data-look='flat'] .rail-actions { flex-direction: row; gap: 10px; margin: 0; }
+[data-look='flat'] .rail-btn {
+  min-height: 46px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--flat-yellow);
+  color: var(--flat-navy);
+  font: 800 15px/1 'Nunito', system-ui, sans-serif;
+  letter-spacing: 0.04em;
+  text-align: center;
+  white-space: nowrap;
+  opacity: 1;
+  box-shadow: 0 5px 0 var(--flat-yellow-edge);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: transform 80ms ease, box-shadow 80ms ease;
+}
+[data-look='flat'] .rail-btn:hover { background: #ffe066; }
+[data-look='flat'] .rail-btn:active,
+[data-look='flat'] .rail-btn.active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--flat-yellow-edge);
+  background: var(--flat-yellow);
+}
+[data-look='flat'] .rail-btn.muted {
+  background: #ff6b6b;
+  color: #fff;
+  box-shadow: 0 5px 0 #c92a2a;
+}
+
+[data-look='flat'] .log {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
+  width: min(680px, 92vw);
+  max-height: 26vh;
+  scrollbar-color: var(--flat-muted) transparent;
+}
+[data-look='flat'] .log-line { font-size: calc(15px * var(--chat-scale)); }
+[data-look='flat'] .log-who {
+  color: var(--flat-yellow);
+  opacity: 1;
+  font-weight: 900;
+  font-size: calc(10px * var(--chat-scale));
+}
+[data-look='flat'] .log-user .log-text { opacity: 0.75; }
+[data-look='flat'] .log-jarvis .log-text { color: #fff; text-shadow: none; }
+[data-look='flat'] .caption {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 84px);
+  max-width: 90vw;
+  font-weight: 700;
+}
+[data-look='flat'] .error {
+  border-radius: 14px;
+  background: #e03131;
+  color: #fff;
+  box-shadow: 0 4px 0 #a51d2d;
+}
+
+/* --- Start screen --- */
+
+[data-look='flat'] .ignition { background: rgba(13, 26, 45, 0.94); }
+[data-look='flat'] .ignition-ring { display: none; }
+[data-look='flat'] .ignition-word {
+  display: inline-block;
+  padding: 18px 30px;
+  border-radius: 18px;
+  background: var(--flat-yellow);
+  color: var(--flat-navy);
+  font: 900 22px/1 'Nunito', system-ui, sans-serif;
+  letter-spacing: 0.08em;
+  text-shadow: none;
+  box-shadow: 0 6px 0 var(--flat-yellow-edge);
+}
+[data-look='flat'] .ignition:active .ignition-word {
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 var(--flat-yellow-edge);
+}
+[data-look='flat'] .ignition-sub {
+  margin-top: 18px;
+  color: var(--flat-muted);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  font-family: 'Nunito', system-ui, sans-serif;
+}
+
+/* --- Settings panel --- */
+
+[data-look='flat'] .settings-panel {
+  border-radius: 20px;
+  border: 0;
+  background: #10223a;
+  box-shadow: 0 8px 0 #091425;
+  font-family: 'Nunito', system-ui, sans-serif;
+  text-transform: none;
+  letter-spacing: normal;
+}
+[data-look='flat'] .settings-choice,
+[data-look='flat'] .settings-tab {
+  border: 0;
+  border-radius: 12px;
+  background: var(--flat-navy);
+  color: #fff;
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 0 #0b1a2e;
+}
+[data-look='flat'] .settings-choice.active,
+[data-look='flat'] .settings-tab.active {
+  background: var(--flat-yellow);
+  color: var(--flat-navy);
+  box-shadow: 0 4px 0 var(--flat-yellow-edge);
+}
+[data-look='flat'] .settings-label,
+[data-look='flat'] .settings-note { letter-spacing: 0.01em; text-transform: none; }

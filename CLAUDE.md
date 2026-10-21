@@ -20,6 +20,14 @@
 > `public/` immer mit `import.meta.env.BASE_URL` bauen, nie mit `/…`.
 > Service Worker `public/sw.js` cacht nur eigene Dateien. Icons:
 > `node scripts/make-icons.mjs` (Stil des Portfolios).
+>
+> **Flache Test-Ansicht** (2026-10-21, Wunsch von Nicolas, nur zum Testen):
+> `?look=flat` oder Einstellungen → Aussehen. Statt der 3D-Szene zeigt
+> `src/ui/FlatReactor.tsx` die JARVIS-Karte aus dem Portfolio (rote Kachel,
+> Reaktor, Balken reagieren auf `level`); Buttons/Schrift im Portfolio-Stil
+> per CSS unter `[data-look='flat']` (Ende von `src/index.css`). Die 3D-Ansicht
+> bleibt Standard und unverändert — nichts löschen. Lokal testen: Eintrag
+> `jarvis-mobile` in `C:\Source\.claude\launch.json` (Port 5181, nur Vite).
 
 Verlauf, Kontext und technische Referenz zu dieser persönlichen JARVIS-Instanz
 (ursprünglich geklont von <https://github.com/adewaskar/jarvis>, läuft jetzt

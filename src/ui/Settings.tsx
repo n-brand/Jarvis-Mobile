@@ -18,6 +18,7 @@ import {
 } from '../lib/prefs'
 import { fetchClaudeUsage, fetchElevenLabsUsage, type ClaudeUsage, type ElevenLabsUsage } from '../lib/limits'
 import { setSetting, removeSetting } from '../lib/profile'
+import { LOOK, setLook } from '../lib/look'
 
 type Tab = 'general' | 'apis' | 'keybinds' | 'names' | 'colors' | 'gestures' | 'limits'
 
@@ -591,6 +592,24 @@ export function Settings() {
                 onClick={() => changeLang('de-DE')}
               >
                 Deutsch
+              </button>
+            </div>
+          </div>
+
+          <div className="settings-row">
+            <span className="settings-label">Aussehen — lädt neu</span>
+            <div className="settings-choices">
+              <button
+                className={`settings-choice${LOOK === 'reactor' ? ' active' : ''}`}
+                onClick={() => LOOK !== 'reactor' && setLook('reactor')}
+              >
+                3D-Reaktor
+              </button>
+              <button
+                className={`settings-choice${LOOK === 'flat' ? ' active' : ''}`}
+                onClick={() => LOOK !== 'flat' && setLook('flat')}
+              >
+                Flach (Test)
               </button>
             </div>
           </div>

@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Scene } from './scene/Scene'
+import { FlatReactor } from './ui/FlatReactor'
+import { LOOK } from './lib/look'
 import { Hud } from './ui/Hud'
 import { Boot } from './ui/Boot'
 import { Ignition } from './ui/Ignition'
@@ -1055,7 +1057,9 @@ export default function App() {
 
   return (
     <>
-      <Scene />
+      {/* Test look: the flat portfolio-style card instead of the 3D reactor.
+          The scene is only swapped out, never removed — see src/lib/look.ts. */}
+      {LOOK === 'flat' ? <FlatReactor /> : <Scene />}
       <Hud />
       <Boot />
       <Diagnostics />
