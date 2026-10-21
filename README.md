@@ -2,17 +2,51 @@
 
 **Live (GitHub Pages):** [https://n-brand.github.io/Jarvis-Mobile/](https://n-brand.github.io/Jarvis-Mobile/)
 
-Mobile/PWA-Ableger von [n-brand/jarvis](https://github.com/n-brand/jarvis).
-Ziel: dieselbe JARVIS-Oberfläche als installierbare Web-App aufs Handy
-bringen. Die Pages-Seite ist nur das Gesicht (statisches Frontend) — das
-Gehirn (`bridge/`) läuft weiterhin auf dem eigenen Rechner.
+Mobile/PWA-Ableger von [n-brand/jarvis](https://github.com/n-brand/jarvis):
+dieselbe JARVIS-Oberfläche als installierbare Web-App fürs Handy. Die
+Pages-Version braucht keinen PC — sie spricht direkt mit der Claude-API.
 
 > **Ohne Erinnerung:** Anders als das Original merkt sich Jarvis Mobile nichts
-> über dich — kein persönlicher Kontext, kein Standort, kein Notizblock auf
-> der Festplatte. Jedes Gespräch beginnt leer und ist weg, sobald die
-> Verbindung schließt. Gespeichert werden nur Einstellungen (Sprache,
-> Persona, Lautstärke …) im Browser. Keys gehören in `.env.local`, das per
-> `.gitignore` ausgeschlossen ist.
+> über dich — kein persönlicher Kontext, kein Standort, kein Notizblock, und
+> auch der Chat-Verlauf ist nach dem Neuladen weg. Gespeichert werden nur
+> Einstellungen (Sprache, Persona, Lautstärke …) und dein API-Key, beides
+> nur auf deinem Gerät.
+
+## Aufs iPhone (oder Android)
+
+1. Einen eigenen Claude-API-Key auf <https://console.anthropic.com> anlegen
+   und dort ein **monatliches Ausgabenlimit** setzen.
+2. <https://n-brand.github.io/Jarvis-Mobile/> in **Safari** öffnen →
+   Teilen → **Zum Home-Bildschirm** (Android/Chrome: Menü → App
+   installieren).
+3. App öffnen, **INITIALISE** antippen, Mikrofon erlauben.
+4. Einstellungen → **APIS** → Key einfügen → Speichern.
+
+Der Key wird nur in diesem Browser auf diesem Gerät gespeichert, nie
+hochgeladen und nie in die App eingebaut. Wer das entsperrte Gerät hat, kann
+ihn nutzen — deshalb das Ausgabenlimit.
+
+**Was in der Handy-Version fehlt:** alles, was die Bridge auf dem PC
+braucht — Chrome steuern, Dateien, Shell, lokale MCP-Server, Panels/Blades,
+ElevenLabs über die Bridge. Hören und Sprechen laufen über den Browser.
+"Hey Jarvis" funktioniert nur, solange die App offen ist (iOS lässt Web-Apps
+nicht im Hintergrund zuhören).
+
+## GitHub Pages einrichten (einmalig)
+
+Repo → **Settings → Pages → Source: GitHub Actions**. Danach baut
+`.github/workflows/pages.yml` bei jedem Push auf `main` und veröffentlicht
+`dist/`. Der Workflow nutzt **keine Secrets** — alles, was als `VITE_*` in
+den Build geht, wäre öffentlich lesbar.
+
+Lokal wie Pages bauen:
+
+```bash
+PAGES_BASE=/Jarvis-Mobile/ VITE_BACKEND=direct npm run build
+```
+
+App-Icons neu erzeugen (Stil wie [das Portfolio](https://n-brand.github.io/portfolio/)):
+`node scripts/make-icons.mjs`.
 
 ---
 

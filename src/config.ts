@@ -57,8 +57,9 @@ function flag(name: string, raw: unknown, fallback: boolean): boolean {
  *              ones like higgsfield, elevenlabs, android and playwright.
  *
  *   'direct' — the browser calls the Claude API itself. Nothing to run and it
- *              deploys as a static site, but it needs VITE_ANTHROPIC_API_KEY in
- *              the bundle and only reaches remote HTTP MCP servers.
+ *              deploys as a static site (the GitHub Pages build sets this).
+ *              The API key is entered per device in the settings panel, never
+ *              built in, and only remote HTTP MCP servers are reachable.
  */
 export const BACKEND: 'bridge' | 'direct' = choice(
   'VITE_BACKEND',
@@ -130,22 +131,36 @@ export const KOKORO_VOICE = choice(
   'bm_george',
 )
 
+/**
+ * Where the Claude API key lives on the direct path: on this device only,
+ * typed into the settings panel (APIS tab) and read back from localStorage.
+ * Never baked into the build — the GitHub Pages bundle is public, and a key
+ * inlined from VITE_ANTHROPIC_API_KEY would be readable by anyone who opens
+ * devtools. The env var still works for a local `npm run dev`, but the
+ * device setting wins when both are present.
+ */
+export const ANTHROPIC_KEY_SETTING = 'jarvis.anthropicKey'
+
 export const env = {
-  anthropicKey: str(import.meta.env.VITE_ANTHROPIC_API_KEY) ?? '',
+  anthropicKey:
+    str(getSetting<string>(ANTHROPIC_KEY_SETTING, '')) ??
+    str(import.meta.env.VITE_ANTHROPIC_API_KEY) ??
+    '',
   elevenKey: str(import.meta.env.VITE_ELEVENLABS_API_KEY) ?? '',
   elevenVoiceId:
     str(import.meta.env.VITE_ELEVENLABS_VOICE_ID) ?? 'JBFqnCBsd6RMkjVDRZzb',
   porcupineKey: str(import.meta.env.VITE_PICOVOICE_ACCESS_KEY) ?? '',
 }
 
-/** `claude-opus-5` is the strongest model; `claude-sonnet-5` trades a little
+/** `claude-opus-5-5` is the current Opus; `claude-sonnet-5-5` trades a little
  *  quality for lower latency if you find responses feel slow on camera. */
-export const MODEL = 'claude-opus-5'
+export const MODEL = 'claude-opus-5-5'
 
 /**
- * Fast mode runs the same Opus 5 at up to 2.5x output speed. It is a research
- * preview on the Claude API and costs $10/$50 per Mtok instead of $5/$25.
- * For a recorded demo the snappiness is worth it; flip to false to save money.
+ * Fast mode runs the same Opus 5.5 at up to 2.5x output speed. It is a
+ * research preview on the Claude API and costs $8/$40 per Mtok instead of
+ * $4/$20. For a voice assistant the snappiness is worth it; flip to false to
+ * save money.
  */
 export const FAST_MODE = true
 

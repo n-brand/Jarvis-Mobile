@@ -707,7 +707,7 @@ export default function App() {
 
     if (!usingBridge && !env.anthropicKey) {
       s.setError(
-        'No Anthropic API key — copy .env.example to .env.local and set VITE_ANTHROPIC_API_KEY.',
+        'No Claude API key on this device — add yours in Settings → APIS. It stays on this device only.',
       )
     }
 

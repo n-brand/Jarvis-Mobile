@@ -7,7 +7,19 @@
 > Standort-Abgleich (`bridge/places.md`, `src/lib/location.ts`) und N.O.R.A.
 > (`bridge/nora.mjs`, `src/ui/Nora.tsx`) sind komplett entfernt. Alles, was
 > weiter unten über diese Funktionen steht, beschreibt nur das Original-Repo.
-> Nicht wieder einbauen, ohne das ausdrücklich zu besprechen.
+> Nicht wieder einbauen, ohne das ausdrücklich zu besprechen. Auch der
+> Chat-Verlauf wird nicht mehr gespeichert (`persist` aus `src/store.ts`
+> entfernt) — der Abschnitt "Chat-Verlauf übersteht Reload" unten gilt nur
+> fürs Original.
+>
+> **PWA / Pages:** `.github/workflows/pages.yml` baut mit
+> `VITE_BACKEND=direct` und `PAGES_BASE=/Jarvis-Mobile/`. **Nie Secrets oder
+> Keys in den Build geben** — alle `VITE_*` landen lesbar im Bundle. Der
+> Claude-Key wird pro Gerät in Einstellungen → APIS gespeichert
+> (`ANTHROPIC_KEY_SETTING` in `src/config.ts`). Pfade zu Dateien aus
+> `public/` immer mit `import.meta.env.BASE_URL` bauen, nie mit `/…`.
+> Service Worker `public/sw.js` cacht nur eigene Dateien. Icons:
+> `node scripts/make-icons.mjs` (Stil des Portfolios).
 
 Verlauf, Kontext und technische Referenz zu dieser persönlichen JARVIS-Instanz
 (ursprünglich geklont von <https://github.com/adewaskar/jarvis>, läuft jetzt

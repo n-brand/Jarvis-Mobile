@@ -4,8 +4,9 @@ import { env, MODEL, FAST_MODE, SYSTEM_PROMPT, activeServers } from '../config'
 /**
  * The Claude API supports CORS, so the browser can talk to it directly — no
  * server of our own. `dangerouslyAllowBrowser` is the SDK's acknowledgement
- * that this exposes the key to anyone who opens devtools, which is acceptable
- * for a local demo and not for a public deploy.
+ * that the key sits in the page. That is why the key is never built in: it is
+ * typed in per device (config.ts, ANTHROPIC_KEY_SETTING), so the public Pages
+ * bundle carries none, and each device only holds its owner's own key.
  */
 const client = new Anthropic({
   apiKey: env.anthropicKey,
@@ -54,7 +55,10 @@ export async function ask(
   let text = ''
   cancelled = false
 
-  const betas = ['mcp-client-2025-11-20']
+  // server-side-fallback: on a safety-classifier refusal the API re-runs the
+  // turn on a fallback model it picks by refusal category, inside the same
+  // call — so a false positive costs a slower answer, not a dead one.
+  const betas = ['mcp-client-2025-11-20', 'server-side-fallback-2026-07-01']
   if (FAST_MODE) betas.push('fast-mode-2026-02-01')
 
   const params = {
@@ -62,10 +66,10 @@ export async function ask(
     max_tokens: 4096,
     system: SYSTEM_PROMPT,
     betas,
+    fallbacks: 'default' as const,
     ...(FAST_MODE ? { speed: 'fast' as const } : {}),
-    // Thinking stays on at low effort. Disabling it entirely on Opus 5 can make
-    // the model write tool calls into its visible text instead of emitting a
-    // real tool_use block, which would silently break every integration here.
+    // Thinking stays on at low effort — Opus 5.5 cannot turn it off anyway,
+    // and effort is set explicitly because its default is medium, not low.
     thinking: { type: 'adaptive' as const },
     output_config: { effort: 'low' as const },
     mcp_servers: servers.map((s) => ({

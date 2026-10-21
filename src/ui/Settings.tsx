@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useStore, phaseColor, BRAND, type Phase } from '../store'
 import { usingBridge } from '../lib/brain'
 import { switchPersona } from '../lib/personaControl'
-import { SPEECH_LANG, SPEECH_LANG_KEY } from '../config'
+import { SPEECH_LANG, SPEECH_LANG_KEY, ANTHROPIC_KEY_SETTING, env } from '../config'
 import { pinchCount } from '../lib/hands'
 import { MOVES } from './GestureGuide'
 import { sttWantsPremium, STT_PREF_KEY } from '../lib/voice'
@@ -17,7 +17,7 @@ import {
   storedSkipIntro,
 } from '../lib/prefs'
 import { fetchClaudeUsage, fetchElevenLabsUsage, type ClaudeUsage, type ElevenLabsUsage } from '../lib/limits'
-import { setSetting } from '../lib/profile'
+import { setSetting, removeSetting } from '../lib/profile'
 
 type Tab = 'general' | 'apis' | 'keybinds' | 'names' | 'colors' | 'gestures' | 'limits'
 
@@ -165,6 +165,10 @@ const STT_NOTE_PAID = {
     'Warten auf das Weckwort — jedes erkannte Sprachsegment wird zur ' +
     'Transkription geschickt, nicht nur ein echtes "Hey Jarvis".',
 }
+const ANTHROPIC_KEY_NOTE: Localized = {
+  en: 'Your own key from console.anthropic.com. Stored on this device only, never uploaded or built into the app — anyone with this device can use it, so set a spend limit in the console. Saving reloads the page.',
+  de: 'Dein eigener Key von console.anthropic.com. Wird nur auf diesem Gerät gespeichert, nie hochgeladen oder in die App eingebaut — wer dieses Gerät hat, kann ihn nutzen, also in der Console ein Ausgabenlimit setzen. Speichern lädt die Seite neu.',
+}
 const STT_APPLY_NOTE: Localized = {
   en: 'Takes effect only after "Aktualisieren" below.',
   de: 'Wirkt erst nach "Aktualisieren" unten.',
@@ -259,10 +263,9 @@ const PANEL_SCALE_NOTE: Localized = { en: 'this window', de: 'dieses Fenster' }
  * Persona and both font-size sliders take effect immediately. Language is
  * the odd one out — the recogniser is a single long-lived loop started once
  * at boot (see voice.ts), not something safely torn down and rebuilt
- * mid-session, so changing it stores the choice and reloads the page. The
- * chat history survives that reload (see store.ts's persist middleware), so
- * it costs a few seconds of the boot animation — skippable with ArrowRight —
- * not the conversation.
+ * mid-session, so changing it stores the choice and reloads the page. In
+ * Jarvis Mobile nothing of the conversation is kept, so that reload also
+ * starts a fresh one — the same as any other reload.
  */
 export function Settings() {
   const open = useStore((s) => s.settingsOpen)
@@ -310,6 +313,11 @@ export function Settings() {
   const [skipIntro, setSkipIntro] = useState(storedSkipIntro)
   /** Where the user has dragged the panel to, from its centred rest position. */
   const [pos, setPos] = useState({ x: 0, y: 0 })
+  /** The Claude API key being typed on the direct path. Never pre-filled with
+   *  the stored one — the field only ever writes, so a saved key is not put
+   *  back on screen. Applying it reloads, the same as the STT engine switch:
+   *  the API client is built once, at load. */
+  const [keyDraft, setKeyDraft] = useState('')
 
   useEffect(() => {
     document.documentElement.style.setProperty('--edge-scale', String(edgeScale))
@@ -333,6 +341,17 @@ export function Settings() {
       .catch(() => setElevenUsage(null))
   }, [tab])
   if (!open) return null
+
+  const saveAnthropicKey = () => {
+    const key = keyDraft.trim()
+    if (!key) return
+    setSetting(ANTHROPIC_KEY_SETTING, key)
+    location.reload()
+  }
+  const forgetAnthropicKey = () => {
+    removeSetting(ANTHROPIC_KEY_SETTING)
+    location.reload()
+  }
 
   const changeEdgeScale = (v: number) => {
     setEdgeScale(v)
@@ -667,6 +686,40 @@ export function Settings() {
 
       {tab === 'apis' && (
         <div className="settings-body">
+          {!usingBridge && (
+            <>
+              <div className="settings-row">
+                <span className="settings-label">
+                  Claude API-Key {env.anthropicKey ? '(gespeichert)' : '(fehlt)'}
+                </span>
+                <div className="settings-inline">
+                  <input
+                    className="settings-key-input"
+                    type="password"
+                    autoComplete="off"
+                    spellCheck={false}
+                    placeholder={env.anthropicKey ? 'Neuen Key einfügen' : 'sk-ant-…'}
+                    value={keyDraft}
+                    onChange={(e) => setKeyDraft(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && saveAnthropicKey()}
+                  />
+                  <button
+                    className="settings-choice settings-choice-save"
+                    onClick={saveAnthropicKey}
+                    disabled={!keyDraft.trim()}
+                  >
+                    Speichern
+                  </button>
+                  {env.anthropicKey && (
+                    <button className="settings-choice" onClick={forgetAnthropicKey}>
+                      Entfernen
+                    </button>
+                  )}
+                </div>
+              </div>
+              <p className="settings-note settings-note-shared">{t(ANTHROPIC_KEY_NOTE, lang)}</p>
+            </>
+          )}
           <div className="settings-row">
             <span className="settings-label">Zuhören (Spracherkennung)</span>
             <div className="settings-choices">

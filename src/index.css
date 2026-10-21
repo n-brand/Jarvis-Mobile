@@ -528,6 +528,21 @@ body::after {
 .settings-inline { display: flex; gap: 8px; align-items: center; }
 .settings-slider-inline { width: auto; flex: 1; }
 .settings-choice-save { flex: 0 0 auto; padding-left: 12px; padding-right: 12px; }
+.settings-choice:disabled { opacity: 0.4; cursor: default; }
+.settings-key-input {
+  flex: 1;
+  min-width: 0;
+  pointer-events: auto;
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
+  border-radius: 2px;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  padding: 7px 10px;
+}
+.settings-key-input:focus { outline: none; border-color: var(--accent); }
+.settings-key-input::placeholder { opacity: 0.45; }
 
 .settings-list { display: flex; flex-direction: column; gap: 10px; }
 

@@ -13,7 +13,26 @@ Dateien: `bridge/server.mjs` (SYSTEM_PROMPT, Abschnitt "Memory")
 - [ ] "Merk dir das" → JARVIS sagt, dass er sich nichts merken kann
 - [ ] "Was weißt du über mich?" → nichts Persönliches außer dem, was im
       laufenden Gespräch gesagt wurde
-- [ ] Seite neu laden → das vorherige Gespräch ist weg
+- [ ] Seite neu laden → das vorherige Gespräch ist weg, auch der angezeigte
+      Verlauf (kein `jarvis-history` mehr in `localStorage`)
+
+## PWA / Handy (Pages-Version)
+
+Dateien: `public/manifest.webmanifest`, `public/sw.js`, `src/main.tsx`,
+`.github/workflows/pages.yml`, `src/ui/Settings.tsx` (Key-Feld)
+
+- [ ] Workflow läuft grün, https://n-brand.github.io/Jarvis-Mobile/ lädt
+      ohne 404 (auch Musik unter `/Jarvis-Mobile/audio/…`)
+- [ ] Ohne Key: Hinweis "No Claude API key on this device"
+- [ ] Key in Einstellungen → APIS speichern → Seite lädt neu, Status
+      "(gespeichert)", Feld bleibt leer (Key wird nie angezeigt)
+- [ ] "Hey Jarvis" bzw. Frage tippen → Antwort kommt
+- [ ] "Entfernen" → Key weg, Hinweis erscheint wieder
+- [ ] iPhone Safari → Zum Home-Bildschirm: Icon im Portfolio-Stil, Name
+      "JARVIS", startet ohne Safari-Leiste
+- [ ] Flugmodus → App öffnet trotzdem (Oberfläche), Antwort scheitert mit
+      Fehlermeldung statt hängen zu bleiben
+- [ ] DevTools → Application → Cache: keine Einträge von api.anthropic.com
 
 ## Offline-/Degraded-Modus
 

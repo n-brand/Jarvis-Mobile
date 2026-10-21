@@ -4,6 +4,9 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  // GitHub Pages serves the app under /Jarvis-Mobile/, not the domain root.
+  // The Pages workflow sets PAGES_BASE; local dev and preview stay at '/'.
+  base: process.env.PAGES_BASE || '/',
   server: {
     // Honour PORT so a second instance can run alongside the first. The bridge
     // only accepts sockets from localhost:5173-5199, so stay inside that range

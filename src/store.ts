@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 import { getSetting, setSetting } from './lib/profile'
 import type { Attachment } from './lib/attachments'
 
@@ -283,14 +282,12 @@ type State = {
    *  (unchanged). Without one — a speaker — that means he'd hear himself, so
    *  App.tsx's mode() goes 'deaf' instead of 'guard' while phase is
    *  'speaking'. Persisted to localStorage directly (like the settings-panel
-   *  scale sliders), not through this store's own persist, which deliberately
-   *  keeps only the transcript. */
+   *  scale sliders); the store itself persists nothing. */
   headphones: boolean
   /** Manual, complete mic cutoff — a UI button, not a phase. While on,
    *  App.tsx's mode() returns 'deaf' no matter what phase says, so there is
    *  no wake word, no VAD, no transcription at all. Persisted to localStorage
-   *  directly (like `headphones`), not through this store's own persist,
-   *  which deliberately keeps only the transcript — carries over across
+   *  directly (like `headphones`) — carries over across
    *  reloads and app restarts on purpose, so a mute stays a mute until you
    *  explicitly press the button again. */
   micOff: boolean
@@ -337,9 +334,16 @@ type State = {
   clearScreen: (what: 'all' | 'panels' | 'transcript') => void
 }
 
-export const useStore = create<State>()(
-  persist(
-    (set) => ({
+// Nothing of the conversation survives a reload — Jarvis Mobile keeps no
+// memory, not even the visible transcript. The original persisted `turns`
+// under this key; clear any copy an older build left behind.
+try {
+  localStorage.removeItem('jarvis-history')
+} catch {
+  // Storage unavailable (private mode, blocked site data) — nothing to clear.
+}
+
+export const useStore = create<State>()((set) => ({
   phase: 'offline',
   level: 0,
   caption: '',
@@ -505,17 +509,7 @@ export const useStore = create<State>()(
         ? { ...cleared, caption: '', activeTool: null }
         : cleared
     }),
-    }),
-    {
-      name: 'jarvis-history',
-      // Only the transcript persists across a reload. Phase, panels, blades,
-      // connection status and everything else are live session state — coming
-      // back as 'thinking' or with a stale panel up would be a lie about what
-      // is actually happening right now, so those always start fresh.
-      partialize: (s) => ({ turns: s.turns }),
-    },
-  ),
-)
+}))
 
 /** The brand wordmark, per active persona — shared by Hud.tsx (display) and
  *  VoiceSwitcher.tsx (the mark doubles as the persona picker). */

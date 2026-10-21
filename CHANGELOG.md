@@ -8,6 +8,18 @@ camera, watch you, and review what just happened"); alles danach ist
 eigene Fork-Arbeit. Details, Bugfixes und technischer Tiefgang stehen in
 [CLAUDE.md](CLAUDE.md); hier steht nur, *was* dazukam.
 
+## 2026-10-21 — Jarvis Mobile als PWA
+- Installierbar aufs Handy: Manifest, Service Worker (nur eigene Dateien,
+  nie API-Aufrufe), iPhone-Tags, App-Icons im Stil des Portfolios
+  (`scripts/make-icons.mjs`).
+- GitHub-Pages-Workflow (`.github/workflows/pages.yml`) baut die direkte
+  Variante ohne Bridge, ohne Secrets.
+- Claude-API-Key wird pro Gerät in Einstellungen → APIS eingegeben statt
+  in den Build eingebaut.
+- Modell auf Claude Opus 5.5 umgestellt, mit automatischem Fallback bei
+  Ablehnungen.
+- Chat-Verlauf wird nicht mehr im Browser gespeichert.
+
 ## 2026-10-21 — Jarvis Mobile: ohne Erinnerung
 - Kopie als `n-brand/Jarvis-Mobile`, Basis für die PWA-Version.
 - Alles entfernt, womit JARVIS sich etwas über den Nutzer merkt: persönlicher
