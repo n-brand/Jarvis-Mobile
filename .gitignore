@@ -1,0 +1,50 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Isolated git worktrees for in-progress plan work (superpowers skills)
+.worktrees/
+
+# Scratch workspace for subagent-driven-development (ledger, briefs, reports)
+.superpowers/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Personal data — this repo is public. The features that read these were
+# removed; the entries stay as a safety net against copying them back in.
+bridge/context.md
+bridge/places.md
+bridge/nora.md
+.env
+.env.*
+!.env.example
+
+# Copied out of node_modules by scripts/start.mjs — 34MB of build output.
+public/mediapipe/
+
+# Candidate music, likely copyrighted commercial tracks — kept locally for
+# personal use, deliberately never committed (see notes in the "Jarvis
+# wichtige Erweiterungen" folder outside this repo).
+public/audio/ironman.mp3
+public/audio/hello_jarvis.mp3
+public/audio/avengers_theme.mp3
+public/audio/jarvis_morning.mp3
